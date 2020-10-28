@@ -1,0 +1,8 @@
+create table users(
+  id serial PRIMARY KEY,
+  name text,
+  email character(50),
+  password text,
+  auth_type integer,
+  user_type character(50)
+)
