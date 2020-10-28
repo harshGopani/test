@@ -13,12 +13,28 @@ export const getData = async(req,res) =>{
             })
         }
         else{
-            // const newitem=[];
-            //     for(var i=0;i<Data.rows.length;i++){
-            //         const companyData= await client.query(`select * from licence_company where id='${Data.rows[i].company_code}' `)
-            //         Data.rows[i].company_code=companyData.rows[0].company_name
-            //         newitem.push(Data.rows[i])
-            //     }
+            const newitem=[];
+                for(var i=0;i<Data.rows.length;i++){
+                    const customerTypeData= await client.query(`select * from customer_type where id='${Data.rows[i].customer_type_id}' `)
+                    Data.rows[i].customer_type_id=customerTypeData.rows[0].custype
+
+                    const webUserTypeData= await client.query(`select * from web_user_type where user_type='${Data.rows[i].customer_group_id}' `)
+                    Data.rows[i].customer_group_id=webUserTypeData.rows[0].user_name
+                    
+                    const limitTypeData= await client.query(`select * from limit_type where id='${Data.rows[i].limit_type}' `)
+                    Data.rows[i].limit_type=limitTypeData.rows[0].limit_name
+                    
+                    const customerDiscountTypeData= await client.query(`select * from customer_discount_type where id='${Data.rows[i].discount_id}' `)
+                    Data.rows[i].discount_id=customerDiscountTypeData.rows[0].discounttype
+
+                    const licenceCountryData= await client.query(`select * from licence_country where id='${Data.rows[i].country_id}' `)
+                    Data.rows[i].country_id=licenceCountryData.rows[0].country_name
+                    
+                    const companyData= await client.query(`select * from licence_company where id='${Data.rows[i].company_id}' `)
+                    Data.rows[i].company_id=companyData.rows[0].company_name
+                    
+                    newitem.push(Data.rows[i])
+                }
             res.status(201).send({
                 success:true,
                 message:'data find successfully',
@@ -126,37 +142,10 @@ export const deleteData = async(req,res) =>{
     }
 }
 
-export const countryCode = async(req,res) =>{
+//get all customer_type_Data
+export const customer_type_Data = async(req,res) =>{
     try{
-        const {companyCode} =req.body;
-        const data = await client.query(`SELECT licence_country.country_code FROM licence_country INNER JOIN licence_company ON licence_country.id = licence_company.country_id where licence_company.
-        id='${companyCode}';`)
-        // console.log("=-=-==-=-=-=compo code",data.rows[0].country_code);
-        if(data.rowCount<=0){
-            res.status(401).send({
-                success:false,
-                message:'data not found'
-            })
-        }
-        else{
-            res.status(201).send({
-                success:true,
-                message:'data deleted successfully ',
-                data:data.rows[0].country_code
-            })
-        }
-    }
-    catch(err){
-        res.status(401).send({
-            success:false,
-            message:err.message
-        })
-    }
-}
-
-export const supplierData = async(req,res) =>{
-    try{
-        const data = await client.query(`select * from licence_suppliers ORDER BY id ASC`)
+        const data = await client.query(`select * from customer_type ORDER BY id ASC`)
 
         if(data.rowCount<=0){
             res.status(401).send({
@@ -180,9 +169,63 @@ export const supplierData = async(req,res) =>{
     }
 }
 
-export const distributorData = async(req,res) =>{
+//get all data from web_user_type
+export const web_user_type = async(req,res) =>{
     try{
-        const data = await client.query(`select * from licence_distributor ORDER BY id ASC`)
+        const data = await client.query(`select user_type,user_name from web_user_type ORDER BY user_type ASC`)
+        if(data.rowCount<=0){
+            res.status(401).send({
+                success:false,
+                message:'data not found'
+            })
+        }
+        else{
+            res.status(201).send({
+                success:true,
+                message:'data find successfully',
+                data:data.rows,
+            })
+        }
+    }
+    catch(err){
+        res.status(401).send({
+            success:false,
+            message:err.message
+        })
+    }
+}
+
+//get all data from limit_type table
+export const limit_type = async(req,res) =>{
+    try{
+        const data = await client.query(`select * from limit_type ORDER BY id ASC`)
+
+        if(data.rowCount<=0){
+            res.status(401).send({
+                success:false,
+                message:'data not found'
+            })
+        }
+        else{
+            res.status(201).send({
+                success:true,
+                message:'data find successfully',
+                data:data.rows,
+            })
+        }
+    }
+    catch(err){
+        res.status(401).send({
+            success:false,
+            message:err.message
+        })
+    }
+}
+
+// get all data from customer_discount_type table
+export const customer_discount_type = async(req,res) =>{
+    try{
+        const data = await client.query(`select * from customer_discount_type ORDER BY id ASC`)
 
         if(data.rowCount<=0){
             res.status(401).send({
